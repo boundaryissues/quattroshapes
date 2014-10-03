@@ -30,6 +30,10 @@ import(){
 	echo "Cleaning up."
 	rm $shapefile.*
 	rm $shapefile.zip
+
+	for file in *.json; do
+		mv $file ${file%.json}.geojson
+	done
 }
 
 source config.sh
