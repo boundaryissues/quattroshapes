@@ -31,8 +31,10 @@ import(){
 	rm $shapefile.*
 	rm $shapefile.zip
 
-	for file in *.json; do
-		mv $file ${file%.json}.geojson
+	for file in *.geojson; do
+		local filename=${file%.geojson}
+		filename=${filename##qs_neighborhoods-}
+		git mv $file $filename.geojson
 	done
 }
 
