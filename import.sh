@@ -11,7 +11,25 @@
 #
 #   ./import.sh
 
+check_dep(){
+	# Check whether the `mapshaper` tool is installed, and install it via npm
+	# if it's not.
+
+	if [ ! -d node_modules/mapshaper ]; then
+		which npm > /dev/null
+		if [ $? -ne 0 ]; then
+			echo "npm not found; required to install \`mapshaper\`."
+		fi
+
+		echo "Installing mapshaper."
+		npm install mapshaper > /dev/null
+	fi
+}
+
 import(){
+	# Download and partition Quattroshapes shapefiles.
+
+	check_dep
 	echo "Partionioning '$shapefile' in '$dest_dir/'."
 
 	echo "Downloading $shapefile.zip."
