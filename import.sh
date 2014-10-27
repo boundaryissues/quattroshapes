@@ -26,11 +26,8 @@ check_dep(){
 	fi
 }
 
-import(){
-	# Download and partition Quattroshapes shapefiles.
-
-	check_dep
-	echo "Partionioning '$shapefile' in '$dest_dir/'."
+get_shapefiles(){
+	# Download and unzip shapefiles.
 
 	echo "Downloading $shapefile.zip."
 	wget --quiet http://static.quattroshapes.com/$shapefile.zip
@@ -40,6 +37,16 @@ import(){
 
 	echo "Unzipping $shapefile.zip."
 	unzip $shapefile.zip > /dev/null
+	rm $shapefile.zip
+}
+
+import(){
+	# Download and partition Quattroshapes shapefiles.
+
+	check_dep
+	get_shapefiles
+
+	echo "Partionioning '$shapefile' in '$dest_dir/'."
 
 	echo "Partionining/converting $shapefile.shp."
 	mapshaper $shapefile.shp encoding=utf8 \
@@ -47,12 +54,12 @@ import(){
 
 	echo "Cleaning up."
 	rm $shapefile.*
-	rm $shapefile.zip
 
-	for file in *.geojson; do
-		local filename=${file%.geojson}
-		filename=${filename##qs_neighborhoods-}
-		git mv $file $filename.geojson
+	IFS=$'\n'
+	for file in $(find . -name "*.json"); do
+		local filename=${file%.json}
+		filename=${filename##./qs_neighborhoods-}
+		mv $file $filename.geojson
 	done
 }
 
