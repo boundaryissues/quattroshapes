@@ -1,7 +1,5 @@
 #! /bin/bash
 
-#! /bin/bash
-
 # Description:
 #   Imports and partitions a Quattroshapes shapefile into GeoJSON extracts.
 #   Configuration variables are stored in `./config.sh`.
@@ -46,7 +44,6 @@ import(){
 	check_dep
 	get_shapefiles
 
-	# cd $dest_dir # TMP!
 	echo "Partionioning '$shapefile' in '$dest_dir/'."
 
 	echo "Partionining/converting $shapefile.shp."
@@ -76,7 +73,7 @@ import(){
 		for sub_file in $(find . -name "*.json"); do
 			local filename=${sub_file%.json}
 			filename=${filename##./qs_neighborhoods-}
-			mv $sub_file $filename.geojson
+			mv -- "$sub_file" "$filename.geojson"
 		done
 
 		find . -name "qs_neighborhoods-$country.*" -type f -print0 \
@@ -85,7 +82,7 @@ import(){
 	done
 
 	echo "Cleaning up."
-	# rm $shapefile.*
+	rm $shapefile.*
 }
 
 source config.sh
