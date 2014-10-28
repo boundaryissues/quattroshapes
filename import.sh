@@ -48,11 +48,11 @@ import(){
 
 	echo "Partionining/converting $shapefile.shp."
 	mapshaper $shapefile.shp encoding=utf8 \
-		-split gn_adm0_cc -o format=shapefile . 2> /dev/null
+		-split gn_adm0_cc -o format=geojson . 2> /dev/null
 
 	IFS=$'\n'
-	for country_file in $(find . -name "qs_neighborhoods-*.shp"); do
-		local country="${country_file%.shp}"
+	for country_file in $(find . -name "qs_neighborhoods-*.json"); do
+		local country="${country_file%.json}"
 		country="${country##./qs_neighborhoods-}"
 
 		local country_dir="$country"
@@ -62,8 +62,7 @@ import(){
 
 		mkdir "$country_dir"
 
-		find . -name "qs_neighborhoods-$country.*" -type f \
-			| xargs -i mv "{}" "$country_dir"
+		mv "$country_file" "$country_dir"
 		cd "$country_dir"
 
 		mapshaper $country_file encoding=utf8 \
@@ -76,8 +75,7 @@ import(){
 			mv -- "$sub_file" "$filename.geojson"
 		done
 
-		find . -name "qs_neighborhoods-$country.*" -type f -print0 \
-			| xargs -0 rm
+		rm $country.geojson
 		cd ..
 	done
 
